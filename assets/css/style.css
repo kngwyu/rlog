@@ -478,4 +478,8 @@ pre code { font-size: 15px !important; }
 
 p code { font-size: 19px; }
 
+.post-content p, .post-content li { font-size: 17px; color: #363636; }
+
+.input_area pre, .input_area div { font-family: 'Source Code Pro', monospace; font-size: 104%; }
+
 /*# sourceMappingURL=style.css.map */
