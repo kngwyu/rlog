@@ -6,6 +6,11 @@ server: .FORCE
 	docker-compose down --remove-orphans || true;
 	docker-compose up
 
+clean:
+	rm _posts/*.md
+	sudo rm -rf images/copied_from_nb/*
+	sudo rm settings.ini
+
 # start (or restart) the services in detached mode
 server-detached: .FORCE
 	docker-compose down || true;
@@ -22,7 +27,7 @@ build: .FORCE
 quick-build: .FORCE
 	docker-compose stop || true;
 	docker build -t fastai/fastpages-jekyll -f _action_files/fastpages-jekyll.Dockerfile .
-	docker-compose build 
+	docker-compose build
 
 # convert word & nb without Jekyll services
 convert: .FORCE
