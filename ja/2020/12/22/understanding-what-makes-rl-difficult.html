@@ -766,7 +766,7 @@ $$
 V_n^\pi(s) = \mathbb{E}_{s, \pi} \left[ R_1 + \gamma R_2 + \gamma^2 R_3 + ... \right]
 $$
 と書けます。
-なので、報酬の最大値を$R_\textrm{max}$とすると、
+なので、報酬の範囲が$0 \leq R_t &lt; R_\textrm{max}$だと仮定すると、
 $\gamma^{k - 1} R_\textrm{max} &lt; \epsilon$ならこの数値計算が収束することがわかります。
 簡単のため$R_\textrm{max}=1$としてみると、$k$が満たすべき条件は
 $$
