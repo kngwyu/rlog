@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="twitter:card" content="summary_large_image" /><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>マルコフゲーム入門 | RLog</title>
+<meta name="generator" content="Jekyll v4.1.1" />
+<meta property="og:title" content="マルコフゲーム入門" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="強化学習若手の会 Advent Calendar 2021 20日目" />
+<meta property="og:description" content="強化学習若手の会 Advent Calendar 2021 20日目" />
+<link rel="canonical" href="https://kngwyu.github.io/rlog/ja/2021/12/22/markov-game.html" />
+<meta property="og:url" content="https://kngwyu.github.io/rlog/ja/2021/12/22/markov-game.html" />
+<meta property="og:site_name" content="RLog" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2021-12-22T00:00:00-06:00" />
+<script type="application/ld+json">
+{"headline":"マルコフゲーム入門","url":"https://kngwyu.github.io/rlog/ja/2021/12/22/markov-game.html","dateModified":"2021-12-22T00:00:00-06:00","datePublished":"2021-12-22T00:00:00-06:00","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://kngwyu.github.io/rlog/ja/2021/12/22/markov-game.html"},"description":"強化学習若手の会 Advent Calendar 2021 20日目","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/rlog/assets/css/style.css"><link type="application/atom+xml" rel="alternate" href="https://kngwyu.github.io/rlog/feed.xml" title="RLog" /><link rel="shortcut icon" type="image/x-icon" href="/rlog/images/favicon.ico"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Primer/15.2.0/primer.css" integrity="sha512-xTz2ys4coGAOz8vuV1NcQBkgVmKhsSEtjbqyMJbBHRplFuvKIUo6xhLHpAyPt9mfR6twHJgn9OgVLuqOvjeBhg==" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css" integrity="sha512-1PKOgIY59xJ8Co8+NE6FZ+LOAZKjy+KY8iq0G4B3CyeY6wYHN3yt9PW0XpSriVlkMXe40PTKnXrLnZ9+fkDaog==" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.12.0/katex.min.css" integrity="sha512-h7nl+xz8wgDlNM4NqKEM4F1NkIRS17M9+uJwIGwuo8vGqIl4BhuCKdxjWEINm+xyrUjNCnK5dCrhM0sj+wTIXw==" crossorigin="anonymous" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.12.0/katex.min.js" integrity="sha512-/CMIhXiDA3m2c9kzRyd97MTb3MC6OVnx4TElQ7fkkoRghwDf6gi41gaT1PwF270W6+J60uTmwgeRpNpJdRV6sg==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.12.0/contrib/auto-render.min.js" integrity="sha512-Do7uJAaHZm5OLrIv/yN4w0iG1dbu01kzdMNnFfu/mAqgUk6Nniv2JYHcwH+cNwjqgLcqcuBBk+JRvprLVI8azg==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha512-0doc9hKxR3PYwso42RD1p5ySZpzzuDiOwMrdCEh2WdJZCjcmFKc/wEnL+z8fBQrnHoiNWbo+3fiGkOYXBdQp4A==" crossorigin="anonymous"></script>
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro&display=swap" rel="stylesheet">
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement( document.body, {
+        delimiters: [
+            {left: "$$", right: "$$", display: true},
+            {left: "[%", right: "%]", display: true},
+            {left: "$", right: "$", display: false}
+        ]}
+        );
+    });
+    </script>
+
+
+<script>
+function wrap_img(fn) {
+    if (document.attachEvent ? document.readyState === "complete" : document.readyState !== "loading") {
+        var elements = document.querySelectorAll(".post img");
+        Array.prototype.forEach.call(elements, function(el, i) {
+            if (el.getAttribute("title") && (el.className != "emoji")) {
+                const caption = document.createElement('figcaption');
+                var node = document.createTextNode(el.getAttribute("title"));
+                caption.appendChild(node);
+                const wrapper = document.createElement('figure');
+                wrapper.className = 'image';
+                el.parentNode.insertBefore(wrapper, el);
+                el.parentNode.removeChild(el);
+                wrapper.appendChild(el);
+                wrapper.appendChild(caption);
+            }
+        });
+    } else { document.addEventListener('DOMContentLoaded', fn); }
+}
+window.onload = wrap_img;
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function(){
+    // add link icon to anchor tags
+    var elem = document.querySelectorAll(".anchor-link")
+    elem.forEach(e => (e.innerHTML = '<i class="fas fa-link fa-xs"></i>'));
+    });
+</script>
+</head>
+<body><header class="site-header">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/rlog/">RLog</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/rlog/about/">About</a><a class="page-link" href="/rlog/search/">Search</a><a class="page-link" href="/rlog/categories/">Tags</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">マルコフゲーム入門</h1><p class="page-description">強化学習若手の会 Advent Calendar 2021 20日目</p><p class="post-meta post-meta-title"><time class="dt-published" datetime="2021-12-22T00:00:00-06:00" itemprop="datePublished">
+        Dec 22, 2021
+      </time>
+       • <span class="read-time" title="Estimated read time">
+    
+    
+      1 min read
+    
+</span></p>
+
+    
+      <p class="category-tags"><i class="fas fa-tags category-tags-icon"></i></i> 
+      
+        <a class="category-tags-link" href="/rlog/categories/#ja">ja</a>
+        
+      
+      </p>
+    
+
+    
+      
+        <div class="pb-5 d-flex flex-justify-center">
+          <div class="px-2">
+
+    <a href="https://github.com/kngwyu/rlog/tree/main/_notebooks/2021-12-22-markov-game.ipynb" role="button" target="_blank">
+<img class="notebook-badge-image" src="/rlog/assets/badges/github.svg" alt="View On GitHub">
+    </a>
+</div>
+
+          <div class="px-2">
+    <a href="https://mybinder.org/v2/gh/kngwyu/rlog/main?filepath=_notebooks%2F2021-12-22-markov-game.ipynb" target="_blank">
+        <img class="notebook-badge-image" src="/rlog/assets/badges/binder.svg" alt="Open In Binder"/>
+    </a>
+</div>
+
+          <div class="px-2">
+    <a href="https://colab.research.google.com/github/kngwyu/rlog/blob/main/_notebooks/2021-12-22-markov-game.ipynb" target="_blank">
+        <img class="notebook-badge-image" src="/rlog/assets/badges/colab.svg" alt="Open In Colab"/>
+    </a>
+</div>
+          
+        </div>
+      </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <ul class="section-nav">
+<li class="toc-entry toc-h1"><a href="#1.-マルコフゲームって？">1. マルコフゲームって？ </a></li>
+<li class="toc-entry toc-h1"><a href="#2.-マルコフ決定過程と基本定理">2. マルコフ決定過程と基本定理 </a></li>
+</ul><!--
+#################################################
+### THIS FILE WAS AUTOGENERATED! DO NOT EDIT! ###
+#################################################
+# file to edit: _notebooks/2021-12-22-markov-game.ipynb
+-->
+
+<div class="container" id="notebook-container">
+        
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="1.-マルコフゲームって？">
+<a class="anchor" href="#1.-%E3%83%9E%E3%83%AB%E3%82%B3%E3%83%95%E3%82%B2%E3%83%BC%E3%83%A0%E3%81%A3%E3%81%A6%EF%BC%9F" aria-hidden="true"><span class="octicon octicon-link"></span></a>1. マルコフゲームって？<a class="anchor-link" href="#1.-%E3%83%9E%E3%83%AB%E3%82%B3%E3%83%95%E3%82%B2%E3%83%BC%E3%83%A0%E3%81%A3%E3%81%A6%EF%BC%9F"> </a>
+</h1>
+<p></p>
+<div class="flash">
+    <svg class="octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info" viewbox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M8 1.5a6.5 6.5 0 100 13 6.5 6.5 0 000-13zM0 8a8 8 0 1116 0A8 8 0 010 8zm6.5-.25A.75.75 0 017.25 7h1a.75.75 0 01.75.75v2.75h.25a.75.75 0 010 1.5h-2a.75.75 0 010-1.5h.25v-2h-.25a.75.75 0 01-.75-.75zM8 6a1 1 0 100-2 1 1 0 000 2z"></path></svg>
+    <strong>Note: </strong>このブログは<a href="https://adventar.org/calendars/6362">強化学習若手の会 Advent Calendar 2021</a> 20日目の記事として書かれました。遅れてすみません。
+</div>
+<p>通常の強化学習では、エージェントは一人しかおらず、世界は固定されています。
+遷移確率Pは変化しません。
+この設定では、エージェントは例えば期待割引報酬和 $\mathbb{E}_{\pi}[ \sum_{t=0}^\infty \gamma^t r(s_t)] $を最大化するような方策を学習します。</p>
+<p>一方で、学習するエージェントがいくつかいる場合はどうでしょうか？
+すると、エージェントがもらえる期待報酬和は他のエージェントの方策$\pi_0, \pi_1, ..., \pi_k$に依存してしまいます。
+では、$\mathbb{E}_{\pi_0, \pi_1, ..., \pi_k}[ \sum_{t=0}^\infty \gamma^t r(s_t)] $を最大化すればいいのかというと、必ずしもそうではありません。
+<strong>利害関係が対立する</strong>場合があるからです。
+このような場合に対し、どのように学習の目標を設計し、また実際に学習することができるのでしょうか？</p>
+<p>このブログでは、このようなマルチエージェント設定での学習を扱うフレームワークの一つであるマルコフゲームに注目し、その性質について概観します。特に、</p>
+<ul>
+<li>MDPにおける価値関数の基本定理のナッシュ均衡解への拡張</li>
+<li>Hannan consistent</li>
+<li>協力ゲームの一般化であるMarkov Potential GameとそのMDPへの帰着
+について扱います。
+論文については適宜ポインタを示しますが、以下の2つの論文/ブログ記事については広範に参照しています。</li>
+<li><a href="https://arxiv.org/abs/1911.10635">Multi-Agent Reinforcement Learning: A Selective Overview of Theories and Algorithms</a></li>
+<li><a href="https://yubai.org/blog/marl_theory.html">Recent Progresses in Multi-Agent RL Theory</a></li>
+</ul>
+<p>MDPについての説明は<a href="https://rltheory.github.io/">アルバータ大学の講義資料</a>およびその<a href="https://tadashik.github.io/rltheory-jp/">日本語訳</a>を参照しています。</p>
+<p>なお、このブログは自分が勉強用に書いたものなので、やや不親切な記述があるかと思いますが、ご了承願います。</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="2.-マルコフ決定過程と基本定理">
+<a class="anchor" href="#2.-%E3%83%9E%E3%83%AB%E3%82%B3%E3%83%95%E6%B1%BA%E5%AE%9A%E9%81%8E%E7%A8%8B%E3%81%A8%E5%9F%BA%E6%9C%AC%E5%AE%9A%E7%90%86" aria-hidden="true"><span class="octicon octicon-link"></span></a>2. マルコフ決定過程と基本定理<a class="anchor-link" href="#2.-%E3%83%9E%E3%83%AB%E3%82%B3%E3%83%95%E6%B1%BA%E5%AE%9A%E9%81%8E%E7%A8%8B%E3%81%A8%E5%9F%BA%E6%9C%AC%E5%AE%9A%E7%90%86"> </a>
+</h1>
+<p>マルコフゲームの説明に入る前に、一人で学習する設定であるマルコフ決定過程 (Markov Decision Process, 以後MDPと呼ぶ)を使って、少しウォーミングアップしましょう。</p>
+<hr>
+<p><strong>定義1: MDP</strong></p>
+<p>MDP $\mathcal{M}$は、以下から成る。</p>
+<ul>
+<li>(有限)状態集合 $\mathcal{S}$</li>
+<li>(有限)行動集合 $\mathcal{A}$</li>
+<li>状態遷移確率 $P: \mathcal{S} \times \mathcal{A} \rightarrow \Delta(\mathcal{S})$<ul>
+<li>$\Delta(\mathcal{S})$は$\mathcal{S}$上の確率分布の空間（確率単体）</li>
+<li>状態$s$で行動$a$をとったとき$s'$に遷移する確率を$P(s'|s, a)$と書く</li>
+</ul>
+</li>
+<li>報酬関数 $r: \mathcal{S} \times \mathcal{A} \rightarrow [0, 1]$<ul>
+<li>状態$s$で行動$a$をもらえる即時報酬を$r(s, a)$と書く</li>
+</ul>
+</li>
+<li>割引報酬率 $0 \leq \gamma &lt; 1$</li>
+<li>初期状態分布 $\mu \in \Delta(\mathcal{S})$</li>
+</ul>
+<hr>
+<p>いま、エージェントとして、「記憶のない」方策$\pi: \mathcal{S} \rightarrow \Delta(\mathcal{A})$を考え、$\pi(a|s)$により状態$s$で行動$a$をとる確率を表記します。
+ある方策$\pi$を固定したとき、エージェントがもらう報酬の期待値を以下のように書きます。</p>
+<hr>
+<p><strong>定義2: 状態価値関数 $V^\pi$・状態行動価値関数 $Q^\pi(s, a)$・期待リターン$G^\pi$</strong></p>
+$$
+\begin{align*}
+V^\pi(s) &amp;= \mathbb{E}_{\pi} \left[\sum_{t = 0} ^\infty \gamma^t r(S_t, A_t)\right] \\
+         &amp;= \sum_{a \in \mathcal{A}} \pi(a|s)\left(r(s, a) + \gamma \sum_{s'\in\mathcal{S}} P(s'|s,a) V^\pi(s)\right) \\
+Q^\pi(s, a) &amp;= r(s, a) + \gamma \sum_{s' \in \mathcal{S}} P(s'|s,a) V^\pi(s) \\
+G^\pi &amp;= \sum_{s \in \mathcal{S}} \mu(s) V^\pi(s)
+\end{align*}
+$$<hr>
+<p>ここで、$S_t, A_t$は時刻$t$での状態・行動に対応する確率変数です。
+このとき、(割引)報酬和の期待値$G^\pi$を最大化することがエージェントの目標であり、その目標を達成する方策を最適方策$\pi^*$と書きます。</p>
+<p>$\pi^*$を求めるための非常に強力な道具が<strong>ベルマン作用素</strong>(Bellman operator)と呼ばれる一連のオペレーターです。</p>
+<hr>
+<p><strong>定義3: 方策$\pi$についてのベルマン演算子</strong></p>
+<p>$V$を任意の価値関数とする。このとき、方策$\pi$に付随するベルマン演算子$\mathcal{T}^\pi$は$V$を$\mathcal{T}^\pi V$に写像する。$\mathcal{T}^\pi V$は以下のように与えられる。</p>
+<p>$(\mathcal{T}^\pi V)(s) = \sum_{a \in \mathcal{A}} \pi(a|s) \left( r(s, a) + \sum_{s' \in \mathcal{S}} P(s'|s,a) V(s') \right)$</p>
+<hr>
+<p>これだけだとだから何?という感じがしますが、この演算子は一回の適用で真の$V^\pi$との差<sup class="footnote-ref" id="fnref-1"><a href="#fn-1">1</a></sup>が(最大ノルムにおいて)$\gamma$ずつ縮まるという性質を持っているので、
+これを繰り返し適用すると$V^\pi$を得ることができます。
+少しやってみましょう。</p>
+<div class="footnotes">
+<hr>
+<ol>
+<li id="fn-1"><p>$V$を$|\mathcal{S}|$次元のベクトルだとみなすと、最大ノルムの差が縮まります。<a href="#fnref-1" class="footnote">↩</a></p></li>
+</ol>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+
+
+  </div><!-- from https://github.com/utterance/utterances -->
+<script src="https://utteranc.es/client.js"
+        repo="kngwyu/rlog"
+        issue-term="title"
+        label="blogpost-comment"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script><a class="u-url" href="/rlog/ja/2021/12/22/markov-game.html" hidden></a>
+</article>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/rlog/"></data>
+
+  <div class="wrapper">
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col">
+        <p class="feed-subscribe">
+          <a href="/rlog/feed.xml">
+            <svg class="svg-icon orange">
+              <use xlink:href="/rlog/assets/minima-social-icons.svg#rss"></use>
+            </svg><span>Subscribe</span>
+          </a>
+        </p>
+      </div>
+      <div class="footer-col">
+        <p>RL Blog</p>
+      </div>
+    </div>
+
+    <div class="social-links"><ul class="social-media-list"><li><a rel="me" href="https://github.com/kngwyu" target="_blank" title="kngwyu"><svg class="svg-icon grey"><use xlink:href="/rlog/assets/minima-social-icons.svg#github"></use></svg></a></li><li><a rel="me" href="https://twitter.com/kngwyu" target="_blank" title="kngwyu"><svg class="svg-icon grey"><use xlink:href="/rlog/assets/minima-social-icons.svg#twitter"></use></svg></a></li></ul>
+</div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>
