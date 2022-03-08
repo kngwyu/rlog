@@ -1,0 +1,973 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="twitter:card" content="summary_large_image" /><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Exercise 5.12 Racetrack from the Reinforcement Learning textbook | RLog</title>
+<meta name="generator" content="Jekyll v4.1.1" />
+<meta property="og:title" content="Exercise 5.12 Racetrack from the Reinforcement Learning textbook" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="RL Blog" />
+<meta property="og:description" content="RL Blog" />
+<link rel="canonical" href="https://kngwyu.github.io/rlog/en/2022/03/07/sandb-exercise-racetrack.html" />
+<meta property="og:url" content="https://kngwyu.github.io/rlog/en/2022/03/07/sandb-exercise-racetrack.html" />
+<meta property="og:site_name" content="RLog" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2022-03-07T00:00:00-06:00" />
+<script type="application/ld+json">
+{"url":"https://kngwyu.github.io/rlog/en/2022/03/07/sandb-exercise-racetrack.html","@type":"BlogPosting","headline":"Exercise 5.12 Racetrack from the Reinforcement Learning textbook","dateModified":"2022-03-07T00:00:00-06:00","datePublished":"2022-03-07T00:00:00-06:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://kngwyu.github.io/rlog/en/2022/03/07/sandb-exercise-racetrack.html"},"description":"RL Blog","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/rlog/assets/css/style.css"><link type="application/atom+xml" rel="alternate" href="https://kngwyu.github.io/rlog/feed.xml" title="RLog" /><link rel="shortcut icon" type="image/x-icon" href="/rlog/images/favicon.ico"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Primer/15.2.0/primer.css" integrity="sha512-xTz2ys4coGAOz8vuV1NcQBkgVmKhsSEtjbqyMJbBHRplFuvKIUo6xhLHpAyPt9mfR6twHJgn9OgVLuqOvjeBhg==" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css" integrity="sha512-1PKOgIY59xJ8Co8+NE6FZ+LOAZKjy+KY8iq0G4B3CyeY6wYHN3yt9PW0XpSriVlkMXe40PTKnXrLnZ9+fkDaog==" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.12.0/katex.min.css" integrity="sha512-h7nl+xz8wgDlNM4NqKEM4F1NkIRS17M9+uJwIGwuo8vGqIl4BhuCKdxjWEINm+xyrUjNCnK5dCrhM0sj+wTIXw==" crossorigin="anonymous" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.12.0/katex.min.js" integrity="sha512-/CMIhXiDA3m2c9kzRyd97MTb3MC6OVnx4TElQ7fkkoRghwDf6gi41gaT1PwF270W6+J60uTmwgeRpNpJdRV6sg==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.12.0/contrib/auto-render.min.js" integrity="sha512-Do7uJAaHZm5OLrIv/yN4w0iG1dbu01kzdMNnFfu/mAqgUk6Nniv2JYHcwH+cNwjqgLcqcuBBk+JRvprLVI8azg==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha512-0doc9hKxR3PYwso42RD1p5ySZpzzuDiOwMrdCEh2WdJZCjcmFKc/wEnL+z8fBQrnHoiNWbo+3fiGkOYXBdQp4A==" crossorigin="anonymous"></script>
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro&display=swap" rel="stylesheet">
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement( document.body, {
+        delimiters: [
+            {left: "$$", right: "$$", display: true},
+            {left: "[%", right: "%]", display: true},
+            {left: "$", right: "$", display: false}
+        ]}
+        );
+    });
+    </script>
+
+
+<script>
+function wrap_img(fn) {
+    if (document.attachEvent ? document.readyState === "complete" : document.readyState !== "loading") {
+        var elements = document.querySelectorAll(".post img");
+        Array.prototype.forEach.call(elements, function(el, i) {
+            if (el.getAttribute("title") && (el.className != "emoji")) {
+                const caption = document.createElement('figcaption');
+                var node = document.createTextNode(el.getAttribute("title"));
+                caption.appendChild(node);
+                const wrapper = document.createElement('figure');
+                wrapper.className = 'image';
+                el.parentNode.insertBefore(wrapper, el);
+                el.parentNode.removeChild(el);
+                wrapper.appendChild(el);
+                wrapper.appendChild(caption);
+            }
+        });
+    } else { document.addEventListener('DOMContentLoaded', fn); }
+}
+window.onload = wrap_img;
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function(){
+    // add link icon to anchor tags
+    var elem = document.querySelectorAll(".anchor-link")
+    elem.forEach(e => (e.innerHTML = '<i class="fas fa-link fa-xs"></i>'));
+    });
+</script>
+</head>
+<body><header class="site-header">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/rlog/">RLog</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/rlog/about/">About</a><a class="page-link" href="/rlog/search/">Search</a><a class="page-link" href="/rlog/categories/">Tags</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">Exercise 5.12 Racetrack from the Reinforcement Learning textbook</h1><p class="post-meta post-meta-title"><time class="dt-published" datetime="2022-03-07T00:00:00-06:00" itemprop="datePublished">
+        Mar 7, 2022
+      </time>
+       • <span class="read-time" title="Estimated read time">
+    
+    
+      11 min read
+    
+</span></p>
+
+    
+      <p class="category-tags"><i class="fas fa-tags category-tags-icon"></i></i> 
+      
+        <a class="category-tags-link" href="/rlog/categories/#en">en</a>
+        
+      
+      </p>
+    
+
+    
+      
+        <div class="pb-5 d-flex flex-justify-center">
+          <div class="px-2">
+
+    <a href="https://github.com/kngwyu/rlog/tree/main/_notebooks/2022-03-07-sandb-exercise-racetrack.ipynb" role="button" target="_blank">
+<img class="notebook-badge-image" src="/rlog/assets/badges/github.svg" alt="View On GitHub">
+    </a>
+</div>
+
+          <div class="px-2">
+    <a href="https://mybinder.org/v2/gh/kngwyu/rlog/main?filepath=_notebooks%2F2022-03-07-sandb-exercise-racetrack.ipynb" target="_blank">
+        <img class="notebook-badge-image" src="/rlog/assets/badges/binder.svg" alt="Open In Binder"/>
+    </a>
+</div>
+
+          <div class="px-2">
+    <a href="https://colab.research.google.com/github/kngwyu/rlog/blob/main/_notebooks/2022-03-07-sandb-exercise-racetrack.ipynb" target="_blank">
+        <img class="notebook-badge-image" src="/rlog/assets/badges/colab.svg" alt="Open In Colab"/>
+    </a>
+</div>
+          
+        </div>
+      </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <ul class="section-nav">
+<li class="toc-entry toc-h2"><a href="#Modeling-the-problem-in-code">Modeling the problem in code </a></li>
+<li class="toc-entry toc-h2"><a href="#Solve-a-small-problem-by-dynamic-programming">Solve a small problem by dynamic programming </a></li>
+</ul><!--
+#################################################
+### THIS FILE WAS AUTOGENERATED! DO NOT EDIT! ###
+#################################################
+# file to edit: _notebooks/2022-03-07-sandb-exercise-racetrack.ipynb
+-->
+
+<div class="container" id="notebook-container">
+        
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Here I demonstrate the execise 5.12 of the textbook <a href="http://incompleteideas.net/book/the-book.html">Reinforcement Learning: An Introduction</a> by Richard Sutton and Andrew G. Barto, using both of planning method and Monte Carlo method.
+Basic knowledge of Python (&gt;= 3.7) and <a href="https://numpy.org/">NumPy</a> are assumed.
+Some konwledge of <a href="https://matplotlib.org/">matplotlib</a> and <a href="https://docs.python.org/3/library/typing.html">Python typing library</a> also helps.</p>
+<p>Contact: <code>yuji.kanagawa@oist.jp</code></p>
+<h2 id="Modeling-the-problem-in-code">
+<a class="anchor" href="#Modeling-the-problem-in-code" aria-hidden="true"><span class="octicon octicon-link"></span></a>Modeling the problem in code<a class="anchor-link" href="#Modeling-the-problem-in-code"> </a>
+</h2>
+<p>Let's start from writing the problem in code.
+What are important in this phase?
+Here, I'd like to emphasize the importantness of looking back at the definition of the environment.
+I.e., in reinforcement learning (RL), environments are modelled by Markov decision process (MDP), consisting of <strong>states, actions, transition function, and reward function</strong>.
+So first let's check the definition of <strong>states</strong> and <strong>actions</strong> in the problem statement.
+It's (somehow) not very straightforward, but we can find</p>
+<blockquote>
+<p>In our simplified racetrack, the car is at one of a discrete set of grid positions, the cells in the diagram. The velocity is also discrete, a number of grid cells moved horizontally and vertically per time step.</p>
+</blockquote>
+<p>So, a state consists of <strong>position</strong> and <strong>velocity</strong> of the car (a.k.a. agent).
+What about actions?</p>
+<blockquote>
+<p>The actions are increments to the velocity components. Each may be changed by +1, −1, or 0 in each step, for a total of nine ($3 \times 3$) actions.</p>
+</blockquote>
+<p>So there are 9 actions for each direction (↓↙←↖↑↗→↘ or no acceleration).
+Here, we can also notice that the total number of states is given by $\textrm{Num. positions} \times \textrm{Num. choices of velocity}$.
+And the texbook also says</p>
+<blockquote>
+<p>Both velocity components are restricted to be nonnegative and less than 5, and they cannot both be zero except at the starting line.</p>
+</blockquote>
+<p>So there are 24 possible velocity at the non-starting positions:</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">itertools</span>
+<span class="nb">list</span><span class="p">(</span><span class="n">itertools</span><span class="o">.</span><span class="n">product</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">),</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">)))[</span><span class="mi">1</span><span class="p">:]</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>[(0, 1),
+ (0, 2),
+ (0, 3),
+ (0, 4),
+ (1, 0),
+ (1, 1),
+ (1, 2),
+ (1, 3),
+ (1, 4),
+ (2, 0),
+ (2, 1),
+ (2, 2),
+ (2, 3),
+ (2, 4),
+ (3, 0),
+ (3, 1),
+ (3, 2),
+ (3, 3),
+ (3, 4),
+ (4, 0),
+ (4, 1),
+ (4, 2),
+ (4, 3),
+ (4, 4)]</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Again, number of states is given by (roughly) $24 \times \textrm{Num. positions}$ and number of actions is $9$.
+Sounds not very easy problem with many positions.</p>
+<p>So, let's start the coding from representing the state and actions.
+There are multiple ways, but I prefer to NumPy array for representing everything.</p>
+<p>Let's consider a ASCII representation of the map (or track) like this:</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">SMALL_TRACK</span> <span class="o">=</span> <span class="s2">"""</span>
+<span class="s2">###     F</span>
+<span class="s2">##      F</span>
+<span class="s2">##      F</span>
+<span class="s2">#      ##</span>
+<span class="s2">#      ##</span>
+<span class="s2">#SSSSS###</span>
+<span class="s2">"""</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Here, <code>S</code> denotes a starting positiona, <code>F</code> denotes a finishing position, <code>#</code> denotes a wall, and <code></code> denotes a road.
+We have this track as a 2D NumPy Array, and encode agent's position as an index of this array.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="k">def</span> <span class="nf">ascii_to_array</span><span class="p">(</span><span class="n">ascii_track</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+    <span class="sd">"""Convert the ascii (string) map to a NumPy array."""</span>
+
+    <span class="n">lines</span> <span class="o">=</span> <span class="p">[</span><span class="n">line</span> <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">ascii_track</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">line</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">]</span>
+    <span class="n">byte_lines</span> <span class="o">=</span> <span class="p">[</span><span class="nb">list</span><span class="p">(</span><span class="nb">bytes</span><span class="p">(</span><span class="n">line</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">))</span> <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">byte_lines</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span>
+
+<span class="n">track</span> <span class="o">=</span> <span class="n">ascii_to_array</span><span class="p">(</span><span class="n">SMALL_TRACK</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">track</span><span class="p">)</span>
+<span class="n">position</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+<span class="n">track</span><span class="p">[</span><span class="nb">tuple</span><span class="p">(</span><span class="n">position</span><span class="p">)]</span> <span class="o">==</span> <span class="nb">int</span><span class="o">.</span><span class="n">from_bytes</span><span class="p">(</span><span class="sa">b</span><span class="s1">'#'</span><span class="p">,</span> <span class="s2">"big"</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>[[35 35 35 32 32 32 32 32 70]
+ [35 35 32 32 32 32 32 32 70]
+ [35 35 32 32 32 32 32 32 70]
+ [35 32 32 32 32 32 32 35 35]
+ [35 32 32 32 32 32 32 35 35]
+ [35 83 83 83 83 83 35 35 35]]
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>True</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Then, agent's velocity and acceleration are also naturally represented by an array.
+And, we represent an action as an index of an array consisting of all possible acceleration vetors:</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">itertools</span><span class="o">.</span><span class="n">product</span><span class="p">([</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>array([[-1, -1],
+       [-1,  0],
+       [-1,  1],
+       [ 0, -1],
+       [ 0,  0],
+       [ 0,  1],
+       [ 1, -1],
+       [ 1,  0],
+       [ 1,  1]])</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The next step is to represent a transition function as a <strong>black box simulator</strong>.
+Note that we will visit another representation by <strong>transition matrix</strong>, but implementing the simulator is easier.
+Basically, the simulator should take an agent's action and current state, and then return the next state.
+Let's call this function <code>step</code>.
+However, let's make it return some other things to make the implementation easier.
+Reward function sounds fairly easy to implement given the agent's position.</p>
+<blockquote>
+<p>The rewards are −1 for each step until the car crosses the finish line.</p>
+</blockquote>
+<p>Also, we have to handle the <em>termination</em> of the episode.</p>
+<blockquote>
+<p>Each episode begins in one of the randomly selected start states with both velocity components zero and
+ends when the car crosses the finish line.</p>
+</blockquote>
+<p>So the resulting <code>step</code> function should return a tuple <code>(state, reward, termination)</code>.
+The below cell contains my implementation of the simulator with matplotlib visualization.
+The <code>step</code> function is so complicated to handle the case where the agent goes through a wall, so readers are encouraged to just run their eyes through.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">NamedTuple</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span>
+
+<span class="kn">from</span> <span class="nn">IPython.display</span> <span class="kn">import</span> <span class="n">display</span>
+<span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
+<span class="kn">from</span> <span class="nn">matplotlib.axes</span> <span class="kn">import</span> <span class="n">Axes</span>
+<span class="kn">from</span> <span class="nn">matplotlib.colors</span> <span class="kn">import</span> <span class="n">ListedColormap</span>
+
+
+<span class="k">class</span> <span class="nc">State</span><span class="p">(</span><span class="n">NamedTuple</span><span class="p">):</span>
+    <span class="n">position</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
+    <span class="n">velocity</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
+
+
+<span class="k">class</span> <span class="nc">RacetrackEnv</span><span class="p">:</span>
+    <span class="sd">"""Racetrack environment"""</span>
+
+    <span class="n">EMPTY</span> <span class="o">=</span> <span class="nb">int</span><span class="o">.</span><span class="n">from_bytes</span><span class="p">(</span><span class="sa">b</span><span class="s2">" "</span><span class="p">,</span> <span class="s2">"big"</span><span class="p">)</span>
+    <span class="n">WALL</span> <span class="o">=</span> <span class="nb">int</span><span class="o">.</span><span class="n">from_bytes</span><span class="p">(</span><span class="sa">b</span><span class="s2">"#"</span><span class="p">,</span> <span class="s2">"big"</span><span class="p">)</span>
+    <span class="n">START</span> <span class="o">=</span> <span class="nb">int</span><span class="o">.</span><span class="n">from_bytes</span><span class="p">(</span><span class="sa">b</span><span class="s2">"S"</span><span class="p">,</span> <span class="s2">"big"</span><span class="p">)</span>
+    <span class="n">FINISH</span> <span class="o">=</span> <span class="nb">int</span><span class="o">.</span><span class="n">from_bytes</span><span class="p">(</span><span class="sa">b</span><span class="s2">"F"</span><span class="p">,</span> <span class="s2">"big"</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">ascii_track</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">noise_prob</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">,</span>
+        <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_track</span> <span class="o">=</span> <span class="n">ascii_to_array</span><span class="p">(</span><span class="n">ascii_track</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_max_height</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_max_width</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_track</span><span class="o">.</span><span class="n">shape</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_noise_prob</span> <span class="o">=</span> <span class="n">noise_prob</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_actions</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">itertools</span><span class="o">.</span><span class="n">product</span><span class="p">([</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_no_accel</span> <span class="o">=</span> <span class="mi">4</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_random_state</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">RandomState</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_start_positions</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argwhere</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_track</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">START</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ax</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_agent_fig</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_arrow_fig</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="nf">_all_passed_positions</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">start</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+        <span class="n">velocity</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="nb">bool</span><span class="p">]:</span>
+        <span class="sd">"""</span>
+<span class="sd">        List all positions that the agent passes over.</span>
+<span class="sd">        Here we assume that the y-directional velocity is already flipped by -1.</span>
+<span class="sd">        """</span>
+
+        <span class="n">maxv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">velocity</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">maxv</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[</span><span class="n">start</span><span class="p">],</span> <span class="kc">False</span>
+        <span class="n">one_step_vector</span> <span class="o">=</span> <span class="n">velocity</span> <span class="o">/</span> <span class="n">maxv</span>
+        <span class="n">pos</span> <span class="o">=</span> <span class="n">start</span> <span class="o">+</span> <span class="mf">0.0</span>
+        <span class="n">traj</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">maxv</span><span class="p">):</span>
+            <span class="n">pos</span> <span class="o">=</span> <span class="n">pos</span> <span class="o">+</span> <span class="n">one_step_vector</span>
+            <span class="n">ceiled</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">pos</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_out</span><span class="p">(</span><span class="n">ceiled</span><span class="p">):</span>
+                <span class="k">return</span> <span class="n">traj</span><span class="p">,</span> <span class="kc">True</span>
+            <span class="n">traj</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ceiled</span><span class="p">)</span>
+        <span class="c1"># To prevent numerical issue</span>
+        <span class="n">traj</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">start</span> <span class="o">+</span> <span class="n">velocity</span>
+        <span class="k">return</span> <span class="n">traj</span><span class="p">,</span> <span class="kc">False</span>
+
+    <span class="k">def</span> <span class="nf">_is_out</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">position</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="n">y</span><span class="p">,</span> <span class="n">x</span> <span class="o">=</span> <span class="n">position</span>
+        <span class="k">return</span> <span class="n">y</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">x</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_max_width</span>
+
+    <span class="k">def</span> <span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="n">State</span><span class="p">,</span> <span class="n">action</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">State</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]:</span>
+        <span class="n">position</span><span class="p">,</span> <span class="n">velocity</span> <span class="o">=</span> <span class="n">state</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_random_state</span><span class="o">.</span><span class="n">rand</span><span class="p">()</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_noise_prob</span><span class="p">:</span>
+            <span class="n">accel</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_actions</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_no_accel</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">accel</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_actions</span><span class="p">[</span><span class="n">action</span><span class="p">]</span>
+        <span class="c1"># velocity is clipped so that only ↑→ directions are possible</span>
+        <span class="n">next_velocity</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">velocity</span> <span class="o">+</span> <span class="n">accel</span><span class="p">,</span> <span class="n">a_min</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">a_max</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+        <span class="c1"># If both of velocity is 0, cancel the acceleration</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">next_velocity</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">next_velocity</span> <span class="o">=</span> <span class="n">velocity</span>
+        <span class="c1"># List up trajectory. y_velocity is flipped to adjust the coordinate system.</span>
+        <span class="n">traj</span><span class="p">,</span> <span class="n">went_out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_all_passed_positions</span><span class="p">(</span>
+            <span class="n">position</span><span class="p">,</span>
+            <span class="n">next_velocity</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]),</span>
+        <span class="p">)</span>
+        <span class="n">passed_wall</span><span class="p">,</span> <span class="n">passed_finish</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span>
+        <span class="k">for</span> <span class="n">track</span> <span class="ow">in</span> <span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">pos</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_track</span><span class="p">[</span><span class="nb">tuple</span><span class="p">(</span><span class="n">pos</span><span class="p">)],</span> <span class="n">traj</span><span class="p">):</span>
+            <span class="n">passed_wall</span> <span class="o">|=</span> <span class="n">track</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">WALL</span>
+            <span class="n">passed_finish</span> <span class="o">|=</span> <span class="n">track</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">FINISH</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">passed_wall</span> <span class="ow">and</span> <span class="n">passed_finish</span><span class="p">:</span>  <span class="c1"># Goal!</span>
+            <span class="k">return</span> <span class="n">State</span><span class="p">(</span><span class="n">traj</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">next_velocity</span><span class="p">),</span> <span class="mi">0</span><span class="p">,</span> <span class="kc">True</span>
+        <span class="k">elif</span> <span class="n">passed_wall</span> <span class="ow">or</span> <span class="n">went_out</span><span class="p">:</span>  <span class="c1"># Crasshed to the wall or run outside</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">reset</span><span class="p">(),</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="kc">False</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">State</span><span class="p">(</span><span class="n">traj</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">next_velocity</span><span class="p">),</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="kc">False</span>
+
+    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">State</span><span class="p">:</span>
+        <span class="n">n_starts</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_start_positions</span><span class="p">)</span>
+        <span class="n">initial_pos_idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_random_state</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">n_starts</span><span class="p">)</span>
+        <span class="n">initial_pos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_start_positions</span><span class="p">[</span><span class="n">initial_pos_idx</span><span class="p">]</span>
+        <span class="n">initial_velocity</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">State</span><span class="p">(</span><span class="n">initial_pos</span><span class="p">,</span> <span class="n">initial_velocity</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">render</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">state</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">State</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">figsize</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mf">8.0</span><span class="p">,</span> <span class="mf">8.0</span><span class="p">),</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Axes</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ax</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">figure</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="n">figsize</span><span class="p">)</span>
+            <span class="n">ax</span> <span class="o">=</span> <span class="n">figure</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">111</span><span class="p">)</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">set_aspect</span><span class="p">(</span><span class="s2">"equal"</span><span class="p">)</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">set_xticks</span><span class="p">([])</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">set_yticks</span><span class="p">([])</span>
+            <span class="c1"># Map the track to one of [0, 1, 2, 3] to that simple colormap works</span>
+            <span class="n">map_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">track</span><span class="p">)</span>
+            <span class="n">symbols</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">EMPTY</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">WALL</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">START</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">FINISH</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">track</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+                <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">track</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]):</span>
+                    <span class="n">map_array</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">symbols</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_track</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">])</span>
+            <span class="n">cm</span> <span class="o">=</span> <span class="n">ListedColormap</span><span class="p">(</span>
+                <span class="p">[</span><span class="s2">"w"</span><span class="p">,</span> <span class="s2">".75"</span><span class="p">,</span> <span class="s2">"xkcd:reddish orange"</span><span class="p">,</span> <span class="s2">"xkcd:kermit green"</span><span class="p">]</span>
+            <span class="p">)</span>
+            <span class="n">map_img</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span>
+                <span class="n">map_array</span><span class="p">,</span>
+                <span class="n">cmap</span><span class="o">=</span><span class="n">cm</span><span class="p">,</span>
+                <span class="n">vmin</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                <span class="n">vmax</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+                <span class="n">alpha</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">descriptions</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"Empty"</span><span class="p">,</span> <span class="s2">"Wall"</span><span class="p">,</span> <span class="s2">"Start"</span><span class="p">,</span> <span class="s2">"Finish"</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">map_array</span> <span class="o">==</span> <span class="n">i</span><span class="p">):</span>
+                    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="n">cm</span><span class="p">(</span><span class="n">i</span><span class="p">),</span> <span class="n">label</span><span class="o">=</span><span class="n">descriptions</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="s2">"lower right"</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_ax</span> <span class="o">=</span> <span class="n">ax</span>
+        <span class="k">if</span> <span class="n">state</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_agent_fig</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_agent_fig</span><span class="o">.</span><span class="n">remove</span><span class="p">()</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_arrow_fig</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_arrow_fig</span><span class="o">.</span><span class="n">remove</span><span class="p">()</span>
+            <span class="n">pos</span><span class="p">,</span> <span class="n">vel</span> <span class="o">=</span> <span class="n">state</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_agent_fig</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">pos</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">pos</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s2">"k^"</span><span class="p">,</span> <span class="n">markersize</span><span class="o">=</span><span class="mi">20</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="c1"># Show velocity</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_arrow_fig</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ax</span><span class="o">.</span><span class="n">annotate</span><span class="p">(</span>
+                <span class="s2">""</span><span class="p">,</span>
+                <span class="n">xy</span><span class="o">=</span><span class="p">(</span><span class="n">pos</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">pos</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="mf">0.2</span><span class="p">),</span>
+                <span class="n">xycoords</span><span class="o">=</span><span class="s2">"data"</span><span class="p">,</span>
+                <span class="n">xytext</span><span class="o">=</span><span class="p">(</span><span class="n">pos</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">vel</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">pos</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">vel</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span>
+                <span class="n">textcoords</span><span class="o">=</span><span class="s2">"data"</span><span class="p">,</span>
+                <span class="n">arrowprops</span><span class="o">=</span><span class="p">{</span><span class="s2">"color"</span><span class="p">:</span> <span class="s2">"xkcd:blueberry"</span><span class="p">,</span> <span class="s2">"alpha"</span><span class="p">:</span> <span class="mf">0.6</span><span class="p">,</span> <span class="s2">"width"</span><span class="p">:</span> <span class="mi">2</span><span class="p">},</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ax</span>
+
+
+<span class="n">env</span> <span class="o">=</span> <span class="n">RacetrackEnv</span><span class="p">(</span><span class="n">SMALL_TRACK</span><span class="p">)</span>
+<span class="n">state</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+<span class="n">display</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">render</span><span class="p">(</span><span class="n">state</span><span class="o">=</span><span class="n">state</span><span class="p">)</span><span class="o">.</span><span class="n">get_figure</span><span class="p">())</span>
+<span class="n">next_state</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">termination</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="mi">7</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">next_state</span><span class="p">)</span>
+<span class="n">env</span><span class="o">.</span><span class="n">render</span><span class="p">(</span><span class="n">state</span><span class="o">=</span><span class="n">next_state</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>State(position=array([5, 5]), velocity=array([0, 0]))
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="data:image/png;base64,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devigx/8YERETJ06NZqammLdunXR1NQUTU1NsXDhwli7dm3ceeedUVdXFytXroxyuVzl6YfzFC4AFTNx4sS48cYb4+GHH4729vaTt998883x8MMPR0dHRwwMDMSxY8di+vTpUSwWY9OmTfGrX/2qilOPTEABqKhFixbF/v37hwW0vb099u/fHx0dHTFlypT43ve+F6tWrYrLLrssHnvssbjjjjuqOPHICmezEre2tpa7urrGcJzKaGtrq/YIAKe1bdu29GOLxWK0tLSM4jTjX29vbxw/fvyU2zs7O4/29fVNGukxF+TPQAf+8933nQwwOnasuq/aI3CB8BQuACQIKAAkCCgAJAgoACQIKAAkCCgAJAgoACQIKAAkCCgAFbVly5ZYsmRJzJw5My6//PJYunRpbN++PTZs2BAf/vCHz+ncu3fvjsmTJ494VaHRdkFeiQiA6jh8+HB0dnbGgw8+GHfffXcMDAzEli1b4qKLLjrnc1cimm9lAwWgYnbt2hUREStWrIja2tqYOHFiLFmyJIrFYnzxi1+MZ555JmbMmBHNzc0REfHEE09Ee3t7NDU1xXXXXRff/va3T57rxLa5fv36mD17dtxxxx1x++23R0REc3NzzJgxI5555pkx+1xsoADjWM26+6PQ98KYfozyVXNi6N/vOaNjr7322qitrY3Vq1fHxz/+8Vi4cGFMmzYtZs+eHQ899FCsX78+fvnLX548vr6+PtauXRutra3R09MTy5Yti+uvvz6WLVt28pju7u7Yvn171NTURH9/f8ydOzf27NkTxeLYJs4GCkDFTJ06NTZt2hSFQiG+8IUvxJVXXhkrVqyIffv2jXj8LbfcEvPmzYuampqYN29edHZ2Rnd397Bj7rnnnpg0aVJMnDixEp/CSTZQgHHsTDfDSpo9e3b84Ac/iIiInTt3xmc/+9n42te+FkuXLj3l2K1bt8a9994bPT09MTg4GMeOHYuPfexjw4657LLLKjL329lAAaia6667Lj75yU9GT09PFAqFU+7/9Kc/HR/96Edj586d8corr8RnPvOZePvvsX7r40Y6x1gRUKAi9h55M5b87Ol49cixao9CFe3cuTPWrFkTe/bsiYiIl19+OTZu3Bgf+MAHoqGhIfbs2RMDAwMnj3/99ddj2rRpcfHFF8e2bdviscceO+35p0+fHjU1NdHX1zemn0eE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%0A">
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>State(position=array([4, 5]), velocity=array([1, 0]))
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>&lt;AxesSubplot:&gt;</pre>
+</div>
+
+</div>
+
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="data:image/png;base64,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%0A">
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Note that the vertical velocity is negative, so that we can simply represent the coordinate by an array index.</p>
+<h2 id="Solve-a-small-problem-by-dynamic-programming">
+<a class="anchor" href="#Solve-a-small-problem-by-dynamic-programming" aria-hidden="true"><span class="octicon octicon-link"></span></a>Solve a small problem by dynamic programming<a class="anchor-link" href="#Solve-a-small-problem-by-dynamic-programming"> </a>
+</h2>
+<p>OK, now we have a simulator, so let's solve the problem!
+However, before stepping into reinforcement learning, it's better to compute an optimal policy in a small problem for sanity check.
+To do so, we need a transition matrix <code>p</code>, which is a $|\mathcal{S}| \times |\mathcal{A}| \times |\mathcal{S}|$ NumPy array where <code>p[i][j][k]</code> is the probability of transiting from <code>i</code> to <code>k</code> when action <code>j</code> is taken.
+Also, we need a $|\mathcal{S}| \times |\mathcal{A}| \times |\mathcal{S}|$ reward matrix <code>r</code>.
+Note that this representation is not general as $R_t$ can be stochastic, but since the only stochasticity of rewards is the noise to actions in this problem, this notion suffices.
+It is often not very straightforward to get <code>p</code> and <code>r</code> from the problem definition, but basically we need to give 0-indexd indices to each state (<code>0, 1, 2, ...</code>) and fill the array.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">get_p_and_r</span><span class="p">(</span><span class="n">env</span><span class="p">:</span> <span class="n">RacetrackEnv</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+    <span class="n">velocities</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">itertools</span><span class="o">.</span><span class="n">product</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">),</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">)))</span>
+    <span class="n">state_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">env</span><span class="o">.</span><span class="n">_max_height</span><span class="p">,</span> <span class="n">env</span><span class="o">.</span><span class="n">_max_width</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+    <span class="n">states</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">current_state_idx</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">starting_states</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="c1"># Number all states</span>
+    <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">_max_height</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">_max_width</span><span class="p">):</span>
+            <span class="n">track</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">_track</span><span class="p">[</span><span class="n">y</span><span class="p">][</span><span class="n">x</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">track</span> <span class="o">==</span> <span class="n">env</span><span class="o">.</span><span class="n">WALL</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="k">for</span> <span class="n">y_velocity</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">):</span>
+                <span class="k">for</span> <span class="n">x_velocity</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">):</span>
+                    <span class="c1"># |v| == 0 is only allowed at starts</span>
+                    <span class="k">if</span> <span class="n">y_velocity</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">x_velocity</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">track</span> <span class="o">!=</span> <span class="n">env</span><span class="o">.</span><span class="n">START</span><span class="p">:</span>
+                        <span class="k">continue</span>
+                    <span class="n">state_indices</span><span class="p">[</span><span class="n">y</span><span class="p">][</span><span class="n">x</span><span class="p">][</span><span class="n">y_velocity</span><span class="p">][</span><span class="n">x_velocity</span><span class="p">]</span> <span class="o">=</span> <span class="n">current_state_idx</span>
+                    <span class="k">if</span> <span class="n">track</span> <span class="o">==</span> <span class="n">env</span><span class="o">.</span><span class="n">START</span><span class="p">:</span>
+                        <span class="n">starting_states</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">current_state_idx</span><span class="p">)</span>
+                    <span class="n">current_state_idx</span> <span class="o">+=</span> <span class="mi">1</span>
+                    <span class="n">states</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                        <span class="n">State</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">y_velocity</span><span class="p">,</span> <span class="n">x_velocity</span><span class="p">]))</span>
+                    <span class="p">)</span>
+    <span class="c1"># Terminating state</span>
+    <span class="n">n_states</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">states</span><span class="p">)</span>
+    <span class="n">n_actions</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">_actions</span><span class="p">)</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">n_states</span><span class="p">,</span> <span class="n">n_actions</span><span class="p">,</span> <span class="n">n_states</span><span class="p">))</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="n">n_states</span><span class="p">,</span> <span class="n">n_actions</span><span class="p">,</span> <span class="n">n_states</span><span class="p">))</span> <span class="o">*</span> <span class="o">-</span><span class="mi">1</span>
+    <span class="n">noise</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">_noise_prob</span>
+
+    <span class="k">def</span> <span class="nf">state_prob</span><span class="p">(</span><span class="o">*</span><span class="n">indices</span><span class="p">):</span>
+        <span class="sd">"""Returns a |S| length zero-initialized array where specified elements are filled"""</span>
+        <span class="n">prob</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">indices</span><span class="p">)</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n_states</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">indices</span><span class="p">:</span>
+            <span class="n">res</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">prob</span>
+        <span class="k">return</span> <span class="n">res</span>
+
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">state</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">states</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]):</span>
+        <span class="n">position</span><span class="p">,</span> <span class="n">velocity</span> <span class="o">=</span> <span class="n">state</span>
+        <span class="c1"># At a terminating state, the agent cannot move</span>
+        <span class="k">if</span> <span class="n">env</span><span class="o">.</span><span class="n">_track</span><span class="p">[</span><span class="nb">tuple</span><span class="p">(</span><span class="n">position</span><span class="p">)]</span> <span class="o">==</span> <span class="n">env</span><span class="o">.</span><span class="n">FINISH</span><span class="p">:</span>
+            <span class="n">r</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_actions</span><span class="p">):</span>
+                <span class="n">p</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">state_prob</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+            <span class="k">continue</span>
+        <span class="c1"># First, compute next state probs without noise</span>
+        <span class="n">next_state_prob</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">action</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">_actions</span><span class="p">):</span>
+            <span class="n">next_velocity</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">velocity</span> <span class="o">+</span> <span class="n">action</span><span class="p">,</span> <span class="n">a_min</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">a_max</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">next_velocity</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">next_velocity</span> <span class="o">=</span> <span class="n">velocity</span>
+            <span class="n">traj</span><span class="p">,</span> <span class="n">went_out</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">_all_passed_positions</span><span class="p">(</span>
+                <span class="n">position</span><span class="p">,</span>
+                <span class="n">next_velocity</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]),</span>
+            <span class="p">)</span>
+            <span class="n">passed_wall</span><span class="p">,</span> <span class="n">passed_finish</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span>
+            <span class="k">for</span> <span class="n">track</span> <span class="ow">in</span> <span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">pos</span><span class="p">:</span> <span class="n">env</span><span class="o">.</span><span class="n">_track</span><span class="p">[</span><span class="nb">tuple</span><span class="p">(</span><span class="n">pos</span><span class="p">)],</span> <span class="n">traj</span><span class="p">):</span>
+                <span class="n">passed_wall</span> <span class="o">|=</span> <span class="n">track</span> <span class="o">==</span> <span class="n">env</span><span class="o">.</span><span class="n">WALL</span>
+                <span class="n">passed_finish</span> <span class="o">|=</span> <span class="n">track</span> <span class="o">==</span> <span class="n">env</span><span class="o">.</span><span class="n">FINISH</span>
+            <span class="k">if</span> <span class="n">went_out</span> <span class="ow">or</span> <span class="p">(</span><span class="n">passed_wall</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">passed_finish</span><span class="p">):</span>  <span class="c1">#  Run outside or crasheed to the wall</span>
+                <span class="n">next_state_prob</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">state_prob</span><span class="p">(</span><span class="o">*</span><span class="n">starting_states</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">ny</span><span class="p">,</span> <span class="n">nx</span> <span class="o">=</span> <span class="n">traj</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                <span class="n">nvy</span><span class="p">,</span> <span class="n">nvx</span> <span class="o">=</span> <span class="n">next_velocity</span>
+                <span class="n">next_state_idx</span> <span class="o">=</span> <span class="n">state_indices</span><span class="p">[</span><span class="n">ny</span><span class="p">,</span> <span class="n">nx</span><span class="p">,</span> <span class="n">nvy</span><span class="p">,</span> <span class="n">nvx</span><span class="p">]</span>
+                <span class="n">next_state_prob</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">state_prob</span><span class="p">(</span><span class="n">next_state_idx</span><span class="p">))</span>
+                <span class="k">if</span> <span class="n">passed_finish</span><span class="p">:</span>
+                    <span class="n">r</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">][</span><span class="n">next_state_idx</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="c1"># Then linearly mix the transition probs with noise</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_actions</span><span class="p">):</span>
+            <span class="n">p</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">noise</span> <span class="o">*</span> <span class="n">next_state_prob</span><span class="p">[</span><span class="n">env</span><span class="o">.</span><span class="n">_no_accel</span><span class="p">]</span>
+                <span class="o">+</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">noise</span><span class="p">)</span> <span class="o">*</span> <span class="n">next_state_prob</span><span class="p">[</span><span class="n">j</span><span class="p">]</span>
+            <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">p</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">state_indices</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Then, let's compute the optimal Q value by value iteration.
+So far, we only learned dynamic programming with discount factor $\gamma$, so let's use $\gamma =0.9$ that is sufficiently large for this small problem.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">value_iteration</span><span class="p">(</span><span class="n">p</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">r</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">discount</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">epsilon</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-8</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+    <span class="n">n_states</span><span class="p">,</span> <span class="n">n_actions</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">shape</span>
+    <span class="n">q</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">n_states</span><span class="p">,</span> <span class="n">n_actions</span><span class="p">))</span>
+    <span class="n">v</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n_states</span><span class="p">)</span>
+    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="n">v_old</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_states</span><span class="p">):</span>
+            <span class="c1"># Q(s, a) = ∑ p(s, a, s') * (r(s, a, s') + γ v(s')</span>
+            <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_actions</span><span class="p">):</span>
+                <span class="n">q</span><span class="p">[</span><span class="n">s</span><span class="p">,</span> <span class="n">a</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="n">s</span><span class="p">,</span> <span class="n">a</span><span class="p">],</span> <span class="n">r</span><span class="p">[</span><span class="n">s</span><span class="p">,</span> <span class="n">a</span><span class="p">]</span> <span class="o">+</span> <span class="n">discount</span> <span class="o">*</span> <span class="n">v</span><span class="p">)</span>
+            <span class="n">v</span><span class="p">[</span><span class="n">s</span><span class="p">]</span> <span class="o">=</span> <span class="n">q</span><span class="p">[</span><span class="n">s</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">v</span> <span class="o">-</span> <span class="n">v_old</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">epsilon</span><span class="p">:</span>
+            <span class="k">break</span>
+    <span class="k">return</span> <span class="n">q</span><span class="p">,</span> <span class="n">v</span>
+
+<span class="n">p</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">state_indices</span> <span class="o">=</span> <span class="n">get_p_and_r</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+<span class="n">q</span><span class="p">,</span> <span class="n">v</span> <span class="o">=</span> <span class="n">value_iteration</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">discount</span><span class="o">=</span><span class="mf">0.9</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Let's visualize the V value and an optimal trajectory.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">state</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+<span class="n">prev_termination</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+    <span class="n">display</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">render</span><span class="p">(</span><span class="n">state</span><span class="o">=</span><span class="n">state</span><span class="p">)</span><span class="o">.</span><span class="n">get_figure</span><span class="p">())</span>
+    <span class="n">state_idx</span> <span class="o">=</span> <span class="n">state_indices</span><span class="p">[</span><span class="nb">tuple</span><span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">position</span><span class="p">)</span> <span class="o">+</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">velocity</span><span class="p">)]</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"V: </span><span class="si">{</span><span class="n">v</span><span class="p">[</span><span class="n">state_idx</span><span class="p">]</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">prev_termination</span><span class="p">:</span>
+        <span class="k">break</span>
+    <span class="n">state</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">prev_termination</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">q</span><span class="p">[</span><span class="n">state_idx</span><span class="p">]))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAdAAAAE7CAYAAABt3tBBAAAAOXRFWHRTb2Z0d2FyZQBNYXRwbG90bGliIHZlcnNpb24zLjUuMSwgaHR0cHM6Ly9tYXRwbG90bGliLm9yZy/YYfK9AAAACXBIWXMAAAsTAAALEwEAmpwYAAAPyklEQVR4nO3dfWzVhbnA8ef0BaW8KE5LS9WLSnkpxDGpL2uZw4BxcWAyXB3Jdrm528KSZbnLsmzL/MNlZmOLW2LEf+7IFi9Vs4nc7K+bbOzFXFK4KpAQlstkRXtxAlLcsCBMWtpz/3DtrBSkD22PlM8nIZFzfuf0OU3Mt8/p+f0oFIvFAACGp6zUAwDAxUhAASBBQAEgQUABIEFAASBBQAEgoWI4B1955ZXFGTNmjNYsXIKqqqpKPQIwSg6+9cdSj3DB3njt5Onut4qVQ903rIDOmDEjWltbR2YqiIjGxsZSjwCMkoe2XPz/f6/7553dZ7vPW7gAkCCgAJAgoACQIKAAkCCgAJAgoACQIKAAkCCgAJAgoACQIKAAkCCgAJAgoACQIKAAkCCgAJAgoACQIKAAkCCgAJAgoACQIKAAkCCgAJAgoACQIKAAkCCgAJAgoACQIKAAkCCgAJAgoACQIKAAkCCgAJAgoACQIKAAkCCgAJAgoACQIKAAkCCgAJAgoACQIKAAkCCgAJAgoACQIKAAkCCgAJAgoACQIKAAkCCgAJAgoACQIKAAkCCgAJBQUeoByGlsbCz1CACXNBsoACQIKAAkCCgAJAgoACQIKAAkCCgAJAgoACQIKAAkCCgAJAgoACQIKAAkCCgAJAgoACQIKAAkCCgAJAgoACQIKAAkCCgAJAgoACQIKAAkCCgAJAgoACQIKAAkCCgAJAgoACQIKAAkCCgAJAgoACQIKAAkCCgAJAgoACQIKAAkCCgAJAgoACQIKAAkCCgAJAgoACQIKAAkCCgAJAgoACQIKAAkCCgAJAgoACQIKAAkCCgAJAgoACQIKAAkCCgAJAgoACQIKAAkCCgAJAgoACQIKAAkCCgAJAgoACQIKAAkCCgAJAgoACQIKAAkCCgAJAgoACQIKAAkCCgAJAgoACQIKAAkCCgAJAgoACQIKAAkCCgAJAgoACQIKAAkCCgAJAgoACQIKAAkCCgAJAgoACQIKAAkCCgAJAgoACQIKAAkCCgAJAgoACQIKAAkCCgAJAgoACQIKAAkCCgAJAgoACQIKAAkCCgAJAgoACQIKAAkCCgAJAgoACQIKAAkCCgAJAgoACQIKAAkVJR6gFJobGws9QgA57Rjx45Sj3DB7qv691KPcMGeLGs56302UABIEFAASBBQAEgQUABIEFAASBBQAEgQUABIEFAASBBQAEgQUABIEFAASBBQAEgQUABIEFAASBBQAEgQUABIEFAASBBQAEgQUABIEFAASBBQAEgQUABIEFAASBBQAEgQUABIEFAASBBQAEgQUABIEFAASBBQAEgQUABIEFAASBBQAEgQUABIEFAASBBQAEgQUABIEFAASBBQAEgQUABIEFAASBBQAEgQUABIEFAASBBQAEgQUABIEFAASBBQAEgQUABIEFAASBBQAEgQUABIEFAASBBQAEgQUABIEFAASBBQAEgQUABIEFAASBBQAEgQUABIEFAASBBQAEgQUABIEFAASBBQAEgQUABIEFAASBBQAEgQUABIEFAASBBQAEgQUABIEFAASBBQAEgQUABIEFAASBBQAEgQUABIEFAASBBQAEgQUABIqCj1AACMvPLy8igUCqUe46JQLBajt7d32I8TUIBxpry8PKqrq+OKK64Q0fdRLBajq6srOjs7hx1Rb+ECjDOFQkE8z9OFfK8EFGAcEs/zl/1eCSgAJAgoABeVLVu2xOzZswf+3tDQEM8999yYzyGgAIyJH//4x7Fy5cpBt334wx8e8rZnn312LEdLEVAAxkRzc3M8//zzA592PXz4cPT09MSuXbsG3fbyyy/H4sWLSznqeRFQAMbEokWLoqenJ3bv3h0REW1tbXHnnXdGfX39oNtuvPHG+O1vfxu33HJL1NTUxIIFC+JnP/tZKUcfkvNAAcaxV199NU6ePDmqX6Oqqiquv/769z1uwoQJ0djYGFu3bo2PfOQjsXXr1mhqaoqamppBtzU3N8c111wTmzZtihtuuCHa2tpi5cqVsWjRoli4cOGovpbhsIECMGYWL14cbW1tERGxbdu2aGpqiubm5kG3LV68OD7xiU/EjTfeGIVCIT72sY/F0qVLY+vWraUc/Qw2UIBx7Hw2w7HU3Nwc69evj6NHj8Ybb7wRs2bNiurq6lizZk0cPXo09uzZE83NzbF58+b4wQ9+EPv27Yu+vr44efJkNDQ0lHr8QQQUgDFz++23x7Fjx+KJ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%0A">
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>V: -2.805849736798703
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAdAAAAE7CAYAAABt3tBBAAAAOXRFWHRTb2Z0d2FyZQBNYXRwbG90bGliIHZlcnNpb24zLjUuMSwgaHR0cHM6Ly9tYXRwbG90bGliLm9yZy/YYfK9AAAACXBIWXMAAAsTAAALEwEAmpwYAAASZ0lEQVR4nO3df5DWdd3v8df+Anb5oSA/FkhTdBWQYyjrL5ZQg8Yy6ZwwjDN1vOdkt51pmrtpmk5TM9lJ+zXVjKNOMwemDgesu1Rm6s+y1DkepEhsvJ07FNEYKkRAJVBXuJbd6/zhWWxlNfiwuxfsPh5/6XV9r+t6X+s4z31f3+u6tq5arQYAOD71tR4AAE5FAgoABQQUAAoIKAAUEFAAKCCgAFCg8XgOPv3006szZswYrFkYgVpaWmo9AjBInn/1qVqPcMJe/Gvn4cqr1ab+rjuugM6YMSPr1q0bmKkgSXt7e61HAAbJrY+c+v9/3/VfHq+83XVewgWAAgIKAAUEFAAKCCgAFBBQACggoABQQEABoICAAkABAQWAAgIKAAUEFAAKCCgAFBBQACggoABQQEABoICAAkABAQWAAgIKAAUEFAAKCCgAFBBQACggoABQQEABoICAAkABAQWAAgIKAAUEFAAKCCgAFBBQACggoABQQEABoICAAkABAQWAAgIKAAUEFAAKCCgAFBBQACggoABQQEABoICAAkABAQWAAgIKAAUEFAAKCCgAFBBQACggoABQQEABoEBjrQegTHt7e61HABjRbKAAUEBAAaCAgAJAAQEFgAICCgAFBBQACggoABQQUAAoIKAAUEBAAaCAgAJAAQEFgAICCgAFBBQACggoABQQUAAoIKAAUEBAAaCAgAJAAQEFgAICCgAFBBQACggoABQQUAAoIKAAUEBAAaCAgAJAAQEFgAICCgAFBBQACggoABQQUAAoIKAAUEBAAaCAgAJAAQEFgAICCgAFBBQACggoABQQUAAoIKAAUEBAAaCAgAJAAQEFgAICCgAFBBQACggoABQQUAAoIKAAUEBAAaCAgAJAAQEFgAICCgAFBBQACggoABQQUAAoIKAAUEBAAaCAgAJAAQEFgAICCgAFBBQACggoABQQUAAoIKAAUEBAAaCAgAJAAQEFgAICCgAFBBQACggoABQQUAAoIKAAUEBAAaCAgAJAAQEFgAICCgAFBBQACggoABQQUAAoIKAAUEBAAaCAgAJAAQEFgAICCgAFBBQACggoABQQUAAoIKAAUEBAAaCAgAJAAQEFgAICCgAFBBQACggoABQQUAAoIKAAUEBAAaBAY60HqIX29vZajwDwjjZv3lzrEU7Yh1v+Z61HOGH31K942+tsoABQQEABoICAAkABAQWAAgIKAAUEFAAKCCgAFBBQACggoABQQEABoICAAkABAQWAAgIKAAUEFAAKCCgAFBBQACggoABQQEABoICAAkABAQWAAgIKAAUEFAAKCCgAFBBQACggoABQQEABoICAAkABAQWAAgIKAAUEFAAKCCgAFBBQACggoABQQEABoICAAkABAQWAAgIKAAUEFAAKCCgAFBBQACggoABQQEABoICAAkABAQWAAgIKAAUEFAAKCCgAFBBQACggoABQQEABoICAAkABAQWAAgIKAAUEFAAKCCgAFBBQACggoABQQEABoICAAkABAQWAAgIKAAUEFAAKCCgAFBBQACggoPRr165dueqqq/LCCy/UehSAk5KA0q/bb789GzZsyO23317rUQBOSgLKUXbt2pU1a9akp6cna9assYUC9ENAOcrtt9+enp6eJEl3d7ctFKAfAkofvdtnpVJJklQqFVsoQD8ElD7+fvvsZQsFOJqAcsRbt89etlCAowkoR/S3ffayhQL0JaAkefvts5ctFKAvASXJO2+fvWyhAG8SUP7h9tnLFgrwJgHlmLbPXrZQgDcI6Ah3rNtnL1sowBsEdIQ7nu2zly0UQEBHtOPdPnvZQgEEdEQr2T572UKBkU5AR6jS7bOXLRQY6QR0hDqR7bOXLRQYyRprPQBD70S3z169W+hXv/rVtLa2DtB0wEBoaGhIXV1drcc4JVSr1XR3dx/37QR0BHq77bOurj5jRk9Mc/PkjBk9KS/s2Zyenq53vK/eLfQHP/jBYI0LHKeGhoZMnTo1p512moj+A9VqNfv378+ePXuOO6ICOgL99re/TaVSyaim8WluPiNjm1szfvy70tw8OUldGhtG51Blf3bt3vQP76tSqWTjxo2DPzRwzOrq6sTzGPX+rPbu3XvctxXQEaKzs5IXdr2SXc/vz+f/ZVV27NiXyqHDR65vbhmV5uam1NfXZe+eV3L9f5yXK678XzWcGDgR4nnsSn9WAjoC3Puvf8iT//Z86hvqUu2pZvSYpjQ3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%0A">
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>V: -1.9176830376418859
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAdAAAAE7CAYAAABt3tBBAAAAOXRFWHRTb2Z0d2FyZQBNYXRwbG90bGliIHZlcnNpb24zLjUuMSwgaHR0cHM6Ly9tYXRwbG90bGliLm9yZy/YYfK9AAAACXBIWXMAAAsTAAALEwEAmpwYAAARgElEQVR4nO3de4yV9ZnA8efMBZzhIlQcZhhARYfLwFqUQXSGoha6GituCoIkbclWDc02zTZN023qHzaV1jZtE6OmyUraELBNq7Kx2abZltZ2YwdSC7QuW6ciKvWCyIAiOA5y5nL2j91hHRlw5sfMOWeGz+cvOOc973nOJPN+ec5cyORyuQAABqak0AMAwHAkoACQQEABIIGAAkACAQWABAIKAAnKBnLwhAkTclOmTBmqWTgHVVZWFnoEYIi81vbXQo9w1g6/2t6ZbcuV93XfgAI6ZcqU2Lx58+BMBRHR0NBQ6BGAIXL3k8P/8/uBT+/Knu4+b+ECQAIBBYAEAgoACQQUABIIKAAkEFAASCCgAJBAQAEggYACQAIBBYAEAgoACQQUABIIKAAkEFAASCCgAJBAQAEggYACQAIBBYAEAgoACQQUABIIKAAkEFAASCCgAJBAQAEggYACQAIBBYAEAgoACQQUABIIKAAkEFAASCCgAJBAQAEggYACQAIBBYAEAgoACQQUABIIKAAkEFAASCCgAJBAQAEggYACQAIBBYAEAgoACQQUABIIKAAkEFAASCCgAJCgrNADkKahoaHQIwCc02ygAJBAQAEggYACQAIBBYAEAgoACQQUABIIKAAkEFAASCCgAJBAQAEggYACQAIBBYAEAgoACQQUABIIKAAkEFAASCCgAJBAQAEggYACQAIBBYAEAgoACQQUABIIKAAkEFAASCCgAJBAQAEggYACQAIBBYAEAgoACQQUABIIKAAkEFAASCCgAJBAQAEggYACQAIBBYAEAgoACQQUABIIKAAkEFAASCCgAJBAQAEggYACQAIBBYAEAgoACQQUABIIKAAkEFAASCCgAJBAQAEggYACQAIBBYAEAgoACQQUABIIKAAkEFAASCCgAJBAQAEggYACQAIBBYAEAgoACQQUABIIKAAkEFAASCCgAJBAQAEggYACQAIBBYAEAgoACQQUABIIKAAkEFAASCCgAJBAQAEggYACQAIBBYAEAgoACQQUABII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Y9u2bYUc/RQ2UIARrD+bYT41NTXFhg0b4siRI3H48OG47LLLoqqqKtatWxdHjhyJlpaWaGpqiq1bt8a3vvWteP7556O7uzva29ujvr6+0OP3IqAA5M2iRYvi2LFjsXHjxrj66qsjImL8+PFRU1MTGzdujJqamqipqYmFCxfGhg0b4uabb47y8vJYs2ZN5HK5Ak/fm7dwAcibioqKuPLKK+PBBx+MxsbGk7dfc8018eCDD0ZTU1Nks9k4ceJETJo0KcrKymLr1q3xxBNPFHDqvgkoAHm1ePHiOHToUK+ANjY2xqFDh6KpqSnGjRsX3/3ud2Pt2rUxderUePTRR+Omm24q4MR9ywxkJa6vr89t3rx5CMfJj4aGhkKPAHBGO3fuTH5sWVlZ1NXVDeI0I9/evXujs7PzlNtXrVrVvm/fvjF9Peac/Bpo9p+L718ywODYvfaeQo/AOcJbuACQQEABIIGAAkACAQWABAIKAAkEFAASCCgAJBBQAEggoADk1fbt22Pp0qUxZcqUmDZtWixbtix27doVP/rRj+JjH/vYWZ37pZdeirFjx/b5W4UG2zn5m4gAKIxjx47FqlWr4r777ouVK1dGNpuN7du3x+jRo8/63PmI5nvZQAHIm+effz4iIlavXh2lpaVRUVERS5cujbKysvjCF74QTz31VEyePDlqa2sjIuKXv/xlNDY2Rk1NTcyaNSu++c1vnjxXz7a5adOmmD17dtx0001xww03REREbW1tTJ48OZ566qkhey02UIARrGTjvZHZ99chfY7cJXOi+zN39evYyy67LEpLS2PdunVx6623xsKFC2PixIkxe/bsuP/++2PTpk3x61//+uTxlZWVsWHDhqivr4+WlpZYvnx5XH755bF8+fKTxzQ3N8euXbuipKQkWltbY+7cubF///4oKxvaxNlAAcib8ePHx9atWyOTycTnP//5uPjii2P16tVx8ODBPo9fsmRJzJs3L0pKSmLevHmxatWqaG5u7nXMXXfdFWPGjImKiop8vISTbKAAI1h/N8N8mj17djz00EMREbFnz56488474ytf+UosW7bslGN37NgRd999d7S0tERHR0ecOHEiPvGJT/Q6ZurUqXmZ+/1soAAUzKxZs+KTn/xktLS0RCaTOeX+22+/PT7+8Y/Hnj174rXXXos77rgj3v//WL/3cX2dY6gIKAB5s2fPnnjggQdi//79ERHx6quvxpYtW+Kqq66Kqqqq2L9/f2Sz2ZPHv/322zFx4sQ477zzYufOnfHoo4+e8fyTJk2KkpKS2Ldv35C+jggBBSCPxo0bFzt27Ijrrrsuqqqq4vrrr485c+bEvffeG9dee23MmTMnLr300pg+fXpERNx3333xjW98I6qrq+Pb3/52rFix4oznr6ysjC9/+cuxbNmyqK2tjT/+8Y9D9loy71+Fz6S+vj63efPmIRsmXy7ffHehRwCGyO619xR6hIIrKyuLurq6Qo8xrOzdu7fPnyNdtWpV+759+8b09RgbKAAkEFAASCCgAJBAQAEggYACQAIBBYAEAgoACQQUABIIKAAFNXny5H7/6r3+HPvkk0/GzJkzB2O0M/K/sQCQN/X19dHa2hqlpaUnb3v66aejpqamX48/3X97VggCCkBePfbYY3H99dcXeoyz5i1cAApq7Nix8cILL0RExGc/+9n44he/GCtXrozq6uq47rrr4sUXX+zz2F/96lexYMGCqK6ujrq6urj//vt7nfeBBx6Iiy++OC699NJ4+OGHB31uGyjACPboc/8Sr7TtHtLnmDb28lg98zuDdr4tW7bE448/HvPnz49169bF17/+9di0adMpx33uc5+LzZs3R1NTUxw5ciReeumlk/cdPHgwjh49Gnv37o3f/va38alPfSpuvvnmmDhx4qDNaQMFIK/WrFkTtbW1UVtbG2vWrDnl/ltuuSUaGhqirKwsbrvttti9u+9/AJSXl8ezzz4bx44di4kTJ8b8+fN73ffVr341ysvL44YbbogxY8bE3r17B/V12EABRrDB3AwHy09/+tNeXwMdO3Zsr/urqqpO/rmioiLeeeedPs/z4x//OL7zne/E1772tZg7d27cc889sWjRooiI+NCHPhRlZf+fuMrKytOeJ5UNFIBhacGCBfHII4/Evn37Yvny5bF27dq8Pr+AAjDsZLPZeOSRR+Lo0aNRXl4e48aN6/WjMfngLVwAhqWf/OQn8aUvfSm6urqirq4ufvCDH+T1+QUUgLxpaWk55ba2traTf37ooYd63bdkyZJ47rnn+jz2Zz/7WZ/P8f7HnO55z5a3cAEggYACQAIBBYAEAgoACQQUYATK5XKFHmHYSP1YCSjACJPL5eLo0aMi2g9n87HyYywAI0xXV1e0trbGoUOHCj3KsJDL5aKrq2vAjxNQgBEoJQgMjLdwASCBgAJAAgEFgAQCCgAJMgP51t1MJnMoIl4aunEAoKhclMvlLuzrjgEFFAD4X97CBYAEAgoACQQUABIIKAAkEFAASCCgAJBAQAEggYACQAIBBYAE/wMwGPwOV0yZWAAAAABJRU5ErkJggg==%0A">
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>V: -1.0
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="data:image/png;base64,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%0A">
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>V: 0.0
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAdAAAAE7CAYAAABt3tBBAAAAOXRFWHRTb2Z0d2FyZQBNYXRwbG90bGliIHZlcnNpb24zLjUuMSwgaHR0cHM6Ly9tYXRwbG90bGliLm9yZy/YYfK9AAAACXBIWXMAAAsTAAALEwEAmpwYAAAR9UlEQVR4nO3df2yV9b3A8c9pT4GWFqhiaSkqCkWoXIdS52wZwmDXxYnJcDiS7XJzt4Uly7Jld9ndnblxmdmccUuM+s+VuBhwy6aSbP9dh78yVshUyHWYW0VEhhMMICJQCv157h9LmZUC7Zf2nLa8Xn/hOc95zudpgm8+D6c0k8vlAgAYnKJCDwAAo5GAAkACAQWABAIKAAkEFAASCCgAJMgO5uApU6bkpk+fPlyzcBEqKysr9AjAMNnf+nqhR7hg77/b1tXRmivp77lBBXT69OmxYcOGoZkKIqKhoaHQIwDD5J7No//398P/sr3jbM+5hQsACQQUABIIKAAkEFAASCCgAJBAQAEggYACQAIBBYAEAgoACQQUABIIKAAkEFAASCCgAJBAQAEggYACQAIBBYAEAgoACQQUABIIKAAkEFAASCCgAJBAQAEggYACQAIBBYAEAgoACQQUABIIKAAkEFAASCCgAJBAQAEggYACQAIBBYAEAgoACQQUABIIKAAkEFAASCCgAJBAQAEggYACQAIBBYAEAgoACQQUABIIKAAkEFAASCCgAJBAQAEggYACQIJsoQcgTUNDQ6FHALio2UABIIGAAkACAQWABAIKAAkEFAASCCgAJBBQAEggoACQQEABIIGAAkACAQWABAIKAAkEFAASCCgAJBBQAEad44c7Y/23d0br4c6CzSCgAIw6f1q/P/62ozU2r99fsBkEFIBR5fjhzvjL/xyOXC7iL88cLtgWKqAAjCp/Wr8/crm//zrXEwXbQgUUgFGjd/vs7vx7Qbs7cwXbQgUUgFHjo9tnr0JtoQIKwKjw8e2zV6G2UAEFYFTob/vsVYgtVEABGPHOtn32KsQWKqAAjHjn2j575XsLFVAARrTzbZ+98r2FCigAI9pAts9e+dxCBRSAEWug22evfG6hAgrAiDWY7bNXvrZQAQVgRBrs9tkrX1uogAIwIqVsn73ysYUKKAAjTur22SsfW6iAAjDiXMj22Wu4t9DssJ0ZAAag7f1J0bZ/ahSXtkd2fGecOnkydr4QURRlkStqj56erqTz9m6hi/91epRfWjLEUwsoAAXW1TYhDrxcH8XjOyKKcnFoz8mou2peRC4iMpnI5Xqiq+tkdHaejK6uE9HR2RqdnSei9cR70Xpi3znP3buF3vbvVw753AIKQEGVT38/SiraonhcZxRle+L4h0fi1KmPbp2ZKCoqjpKSshg/riIqirIxbtyk+Os7m84b0O7OXLz7fyeGZW4BBaCgirI9UTnnnTjcclWMn9QW826pPOuxuVxE+4flUTnnb/HPN2Ujk1mYx0n78iEiAApu8qz9EbnMOT84lMtFdBybGBVXHIhpN74emUz+5uuPgAJQUF2nSuLE/ksjIqKn8+w3RjtaS6P00qMxvem1yBRf4Ed0h4BbuADkXS4XcfLQlPjwzcvj+N7qyOUykZ3QHkUl/X/itrN1fJSUnYraJf8bRSXdeZ62fwIKQN50nSqJ43+tjg/emBmdJyZEJpOLkokno6t9XHSdGh89xyfG+CnHoyjb84/XnBwXmeJcXL5se2RLOwo4fV8CCsCwOtu2WVLWHp1t46OjtSzKqg9H5dy9cfLgJfHB61fG+EltERHR3ZGNnq7iuPLWl2NcxckCX0lfAgrAsDjftlk8rjOm/tPumHTVe6fjOH5SW3zQMjNyuYhcd1F0nRwfMz6zPSZceqzAV3MmAQVgyORyudj71yPxykt7Y/eLS865bU6sORxFH/sw0LhJbVFWdSROHZ4c3Z3FMb1pR5RPP1ygqzk3AQXggp1obY/XdrwXzX96Oz48cjKKizPn3TbPZsrcvfHu8w1R1fBGTJ71Xp6uYPAEFIAkH902d+zYH7meiPLycTF5yoQ4+uGp826bZ1NeeyhmLN0eFVceGOYruDACCsCg9LdtTplSFidOtEdra3tMKC2Jpcvroqv9/qQP/hQV52LSzJEdzwgBBWAAzrdtfvBBW8yafWk0Ns2M2XWXRTZbHH/cPLI+NTvUBBSAsxrotnn9DTPikkvKCj1uXgkoAH18fNvs6YmoOM+2eTESUAAiwrY5WAIKcBGzbaYTUICLkG3zwgkowEXCtjm0BBRgjLNtDg8BBRiDbJvDT0ABxpC+22ZbFBcX2TaHiYACjHJn3zZLbZvDSEABRinbZmEJKMAoYtscOQQUYBSwbY48AgowQtk2RzYBBRhhbJujg4ACjABn/3mbts2RSkABCsi2OXoJKECeDXTbvLlxZtTNsW2OVAIKkCe2zbFFQAGGkW1z7BJQgGFworU9XnvtvWjebNscqwQUYIica9v88MNT8cEHJ2LW7Km2zTFCQAEu0Lm2zeOt7VFaWhKfsW2OOQIKkMC2iYACDIJtk14CCjBAf3zxrXju2Z22TSJCQAEGLpOJnu5cjJ+QtW0ioAADteD66fHHF3bFjMun2DYRUICBmjy5NP7zv5bHuHH+10lEUaEHABhNxJNeAgoACQQUABIIKAAkEFAASCCgAJBAQAEggYACQAIBBYAEAgoACQQUABIIKAAkEFAASCCgAJBAQAEggYACQAIBBYAEAgoACQQUABIIKAAkEFAASCCgAJAgW+gBCqGhoaHQIwCc07Zt2wo9wgW7o+y/Cz3CBXuiaNVZn7OBAkACAQWABAIKAAkEFAASCCgAJBBQAEggoACQQEABIIGAAkACAQWABAIKAAkEFAASCCgAJBBQAEggoACQQEABIIGAAkACAQWABAIKAAkEFAASCCgAJBBQAEggoACQQEABIIGAAkACAQWABAIKAAkEFAASCCgAJBBQAEggoACQQEABIIGAAkACAQWABAIKAAkEFAASCCgAJBBQAEggoACQQEABIIGAAkACAQWABAIKAAkEFAASCCgAJBBQAEggoACQQEABIIGAAkACAQWABAIKAAkEFAASCCgAJBBQAEggoACQQEABIIGAAkACAQWABAIKAAkEFAASCCgAJBBQAEggoACQQEABIIGAAkACAQWABAIKAAkEFAASCCgAJBBQAEggoACQQEABIIGAAkACAQWABAIKAAkEFAASCCgAJBBQAEggoACQQEABIIGAAkACAQWABNlCDwDA0CsuLo5MJlPoMUaFXC4X3d3dg36dgAKMMcXFxVFVVRWTJ08W0fPI5XJx9OjROHjw4KAj6hYuwBiTyWTEc4Au5GsloABjkHgOXOrXSkABIIGAAjCqbN68OebMmXP6v+vr6+PFF1/M+xwCCkBe/OIXv4iVK1f2eewTn/hEv489/fTT+RwtiYACkBdNTU3x5z//+fSnXQ8cOBCdnZ3x6quv9nls9+7dsWjRokKOOiACCkBeLFy4MDo7O2PHjh0REdHc3ByLFy+Ourq6Po9dffXV8dxzz8UNN9wQ1dXVMX/+/PjlL39ZyNH75ftAAcawd955J9ra2ob1PcrKyuKKK64473Hjxo2LhoaG2LJlS1x//fWxZcuWaGxsjOrq6j6PNTU1xWWXXRYbN26Mq666Kpqbm2PlypWxcOHCWLBgwbBey2DYQAHIm0WLFkVzc3NERGzdujUaGxujqampz2OLFi2Kz33uc3H11VdHJpOJT3/607Fs2bLYsmVLIUc/gw0UYAwbyGaYT01NTbFu3bo4cuRIvP/++zF79uyoqqqKtWvXxpEjR6KlpSWamppi06ZN8bOf/Szeeuut6Onpiba2tqivry/0+H0IKAB5c9NNN8WxY8fi8ccfj0996lMRETFp0qSoqamJxx9/PGpqaqKmpiZuvPHGWLduXdx+++1RUlISq1evjlwuV+Dp+3ILF4C8KS0tjRtuuCEeeeSRaGxsPP34zTffHI888kg0NTVFR0dHtLe3x9SpUyObzcamTZvi+eefL+DU/RNQAPJq0aJFcejQoT4BbWxsjEOHDkVTU1NUVFTEz3/+81izZk3MmDEjnnrqqbjtttsKOHH/MoNZievr63MbNmwYxnHyo6GhodAjAJzTtm3bkl+bzWajrq5uCKcZ+3bt2hVdXV1nPL5q1aq2PXv2TOzvNRfl34F2fHvk/UkGGBo71txb6BG4SLiFCwAJBBQAEggoACQQUABIIKAAkEBAASCBgAJAAgEFgAQCCkBebd26NZYtWxbTp0+Pyy+/PJYvXx7bt2+PX/3qV/HZz372gs69d+/eKC8v7/dfFRpqF+W/RARAYRw7dixWrVoVDz74YNx5553R0dERW7dujfHjx1/wufMRzY+ygQKQN2+99VZERNx1111RXFwcpaWlsWzZsshms/Gd73wnXnrppZg2bVrU1tZGRMQzzzwTjY2NUVNTE9dcc0389Kc/PX2u3m1z/fr1MXfu3Ljtttvi1ltvjYiI2tramDZtWrz00kvDdi02UIAxrOjx+yKz5/VhfY/cVfOi59/uHtCxs2fPjuLi4li7dm188YtfjBtvvDEqKytj7ty58dBDD8X69evj2WefPX18WVlZrFu3Lurr66OlpSVWrFgR1113XaxYseL0Mc3NzbF9+/YoKiqKgwcPxrXXXhv79u2LbHZ4E2cDBSBvJk2aFJs2bYpMJhPf+ta3YubMmXHXXXfFgQMH+j1+8eLFMX/+/CgqKor58+fHqlWrorm5uc8xd999d0ycODFKS0vzcQmn2UABxrCBbob5NHfu3Hj00UcjImLnzp3x9a9/PX7wgx/E8uXLzzj2lVdeiXvuuSdaWlqis7Mz2tvb4wtf+EKfY2bMmJGXuT/OBgpAwVxzzTXx5S9/OVpaWiKTyZzx/Fe/+tX4/Oc/Hzt37oz9+/fH1772tfj4z7H+6Ov6O8dwEVAA8mbnzp3x8MMPx759+yIi4t13342NGzfGJz/5yaiqqop9+/ZFR0fH6eOPHz8elZWVMWHChNi2bVs89dRT5zz/1KlTo6ioKPbs2TOs1xEhoADkUUVFRbzyyiuxZMmSqKqqiqVLl8a8efPivvvui1tuuSXmzZsXs2bNiiuuuCIiIh588MH4yU9+EtXV1XH//ffHypUrz3n+srKy+P73vx/Lly+P2traePnll4ftWjIfX4XPpb6+Prdhw4ZhGyZfrttwT6FHAIbJjjX3FnqEgstms1FXV1foMUaVXbt29ft9pKtWrWrbs2fPxP5eYwMFgAQCCgAJBBQAEggoACQQUABIIKAAkEBAASCBgAJAAgEFoKCmTZs24H96byDHbt68OebMmTMUo52Tn8YCQN7U19fHwYMHo7i4+PRjr776atTU1Azo9Wf7sWeFIKAA5NXTTz8dS5cuLfQYF8wtXAAKqry8PHbv3h0REd/4xjfiu9/9btx5551RXV0dS5YsibfffrvfY//whz/EwoULo7q6Ourq6uKhhx7qc96HH344Zs6cGbNmzYonnnhiyOe2gQKMYU+9+R/xt9Ydw/oel5dfF3fNeWDIzrdx48b43e9+FwsWLIi1a9fGj3/841i/fv0Zx33zm9+MDRs2RFNTUxw5ciT27t17+rkDBw7E0aNHY9euXfHCCy/EV77ylbj99tujsrJyyOa0gQKQV6tXr47a2tqora2N1atXn/H8HXfcEQ0NDZHNZuNLX/pS7NjR/x8ASkpK4o033ohjx45FZWVlLFiwoM9zP/zhD6OkpCRuvfXWmDhxYuzatWtIr8MGCjCGDeVmOFR++9vf9vk70PLy8j7PV1VVnf51aWlpnDhxot/z/PrXv44HHnggfvSjH8W1114b9957b9x0000REXHJJZdENvuPxJWVlZ31PKlsoACMSgsXLownn3wy9uzZEytWrIg1a9bk9f0FFIBRp6OjI5588sk4evRolJSUREVFRZ9vjckHt3ABGJV+85vfxPe+973o7u6Ourq6eOyxx/L6/gIKQN60tLSc8Vhra+vpXz/66KN9nlu8eHG8+eab/R77+9//vt/3+Phrzva+F8otXABIIKAAkEBAASCBgAJAAgEFGINyuVyhRxg1Ur9WAgowxuRyuTh69KiIDsCFfK18GwvAGNPd3R0HDx6MQ4cOFXqUUSGXy0V3d/egXyegAGNQShAYHLdwASCBgAJAAgEFgAQCCgAJMoP56G4mkzkUEXuHbxwAGFGuzOVyl/X3xKACCgD8nVu4AJBAQAEggYACQAIBBYAEAgoACQQUABIIKAAkEFAASCCgAJDg/wH/dLbUL2PMpgAAAABJRU5ErkJggg==%0A">
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>V: 0.0
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+</div>
+
+
+
+  </div><!-- from https://github.com/utterance/utterances -->
+<script src="https://utteranc.es/client.js"
+        repo="kngwyu/rlog"
+        issue-term="title"
+        label="blogpost-comment"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script><a class="u-url" href="/rlog/en/2022/03/07/sandb-exercise-racetrack.html" hidden></a>
+</article>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/rlog/"></data>
+
+  <div class="wrapper">
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col">
+        <p class="feed-subscribe">
+          <a href="/rlog/feed.xml">
+            <svg class="svg-icon orange">
+              <use xlink:href="/rlog/assets/minima-social-icons.svg#rss"></use>
+            </svg><span>Subscribe</span>
+          </a>
+        </p>
+      </div>
+      <div class="footer-col">
+        <p>RL Blog</p>
+      </div>
+    </div>
+
+    <div class="social-links"><ul class="social-media-list"><li><a rel="me" href="https://github.com/kngwyu" target="_blank" title="kngwyu"><svg class="svg-icon grey"><use xlink:href="/rlog/assets/minima-social-icons.svg#github"></use></svg></a></li><li><a rel="me" href="https://twitter.com/kngwyu" target="_blank" title="kngwyu"><svg class="svg-icon grey"><use xlink:href="/rlog/assets/minima-social-icons.svg#twitter"></use></svg></a></li></ul>
+</div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>
